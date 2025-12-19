@@ -1,0 +1,64 @@
+import java.util.*;
+//Main Class, used for player input and checking it to see how close the players input was to the answer
+public class Main extends Words
+{
+    //Variable and object initiations used for both 'main' and 'checkGuess' method
+    public static String guess; // Player input
+
+    // Changes text output to a specific color by using ANSI color codes, used to signify a letters status in the players guess
+    public static final String green = "\u001B[32m";
+    public static final String yellow = "\u001B[33m";
+    public static final String reset = "\u001B[0m"; //resets color
+
+    public static ArrayList<String> guessList = new ArrayList<>();// Arraylist of players previous guess, used to prevent user from inputting a word more than once
+
+    public UI output= new UI();
+    //Used for player input
+    public static void main(String[] args)
+    {
+        int playAgain = 1; // used to run the game itself, player can change this value at end of game to not play again.
+        int lives;
+        Scanner scan = new Scanner(System.in);// scanner creation for user input
+        makeList(); // initiates the 'Words' class
+        Verification checker = new Verification();
+        System.out.println("Welcome to Wordle!  You have 5 guesses to guess the word, and the word must be 5 letters long");
+        while (playAgain == 1)
+        {
+            pickWord();
+            lives=5;
+            while (lives > 0) // the player has 5 chances to guess the word
+            {
+                System.out.println("Enter Word");
+                guess = scan.next();
+                if(checker.isWord())
+                    if (checker.checkValidity()) //uses the' verification class to see if a users word is valid
+                    {
+                        if (checker.checkGuess(guess, wordAns).equals("WIN"))// 'checkGuess' method returns "WIN" if the player guessed the word correctly
+                        {
+                            System.out.println(green+guess.toUpperCase()+reset + "\nYou Win!");
+                            guessList.clear(); // clears list of previous guesses
+                            lives=-1;
+                            System.out.println("Play again? (type 1 if yes type anything else if no)"); // if player inputs 1 the game resets
+                            playAgain = scan.nextInt();
+                        }
+                        else
+                        {
+                            guessList.add(guess.toUpperCase()); // sets guess to al upper case to simplify comparison
+                            lives--;
+                            System.out.println(checker.checkGuess(guess, wordAns) + " You have " + lives + " guess(es) left!");
+                        }
+                    }
+
+
+            }
+            if (lives ==0)
+            {
+                System.out.println("Ran out of Guesses");
+                System.out.println("Play again? (type 1 if yes type anything else if no)");
+                playAgain = scan.nextInt();
+            }
+        }
+    }
+
+
+}
